@@ -633,7 +633,7 @@ void FileManager::try_forget_file_id(FileId file_id) {
     return;
   }
 
-  LOG(DEBUG) << "Forget file " << file_id;
+  // LOG(DEBUG) << "Forget file " << file_id;
   auto it = std::find(file_node->file_ids_.begin(), file_node->file_ids_.end(), file_id);
   CHECK(it != file_node->file_ids_.end());
   file_node->file_ids_.erase(it);
@@ -738,7 +738,7 @@ Result<FileId> FileManager::register_file(FileData data, FileLocationSource file
 
   FileId file_id = next_file_id();
 
-  LOG(INFO) << "Register file data " << data << " as " << file_id << " from " << source;
+  LOG(INFO) << "Register file data " << data.remote_name_ << " as " << file_id << " from " << source;
   // create FileNode
   auto file_node_id = next_file_node_id();
   auto &node = file_nodes_[file_node_id];
@@ -929,7 +929,7 @@ void FileManager::cancel_generate(FileNodePtr node) {
 }
 
 Result<FileId> FileManager::merge(FileId x_file_id, FileId y_file_id, bool no_sync) {
-  LOG(DEBUG) << x_file_id << " VS " << y_file_id;
+  // LOG(DEBUG) << x_file_id << " VS " << y_file_id;
 
   if (!x_file_id.is_valid()) {
     return Status::Error("First file_id is invalid");
@@ -1016,12 +1016,12 @@ Result<FileId> FileManager::merge(FileId x_file_id, FileId y_file_id, bool no_sy
   FileNodePtr other_node = nodes[other_node_i];
   auto file_view = FileView(node);
 
-  LOG(DEBUG) << "x_node->pmc_id_ = " << x_node->pmc_id_ << ", y_node->pmc_id_ = " << y_node->pmc_id_
-             << ", x_node_size = " << x_node->file_ids_.size() << ", y_node_size = " << y_node->file_ids_.size()
-             << ", node_i = " << node_i << ", local_i = " << local_i << ", remote_i = " << remote_i
-             << ", generate_i = " << generate_i << ", size_i = " << size_i << ", remote_name_i = " << remote_name_i
-             << ", url_i = " << url_i << ", owner_i = " << owner_i << ", encryption_key_i = " << encryption_key_i
-             << ", main_file_id_i = " << main_file_id_i;
+  //LOG(DEBUG) << "x_node->pmc_id_ = " << x_node->pmc_id_ << ", y_node->pmc_id_ = " << y_node->pmc_id_
+  //           << ", x_node_size = " << x_node->file_ids_.size() << ", y_node_size = " << y_node->file_ids_.size()
+  //           << ", node_i = " << node_i << ", local_i = " << local_i << ", remote_i = " << remote_i
+  //           << ", generate_i = " << generate_i << ", size_i = " << size_i << ", remote_name_i = " << remote_name_i
+  //           << ", url_i = " << url_i << ", owner_i = " << owner_i << ", encryption_key_i = " << encryption_key_i
+  //           << ", main_file_id_i = " << main_file_id_i;
   if (local_i == other_node_i) {
     cancel_download(node);
     node->set_local_location(other_node->local_, other_node->local_ready_size_);

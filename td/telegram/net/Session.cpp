@@ -1204,10 +1204,10 @@ void Session::loop() {
 
   relax_timeout_at(&wakeup_at, main_connection_.wakeup_at);
 
-  double wakeup_in = 0;
+  // double wakeup_in = 0;
   if (wakeup_at != 0) {
-    wakeup_in = wakeup_at - Time::now_cached();
-    LOG(DEBUG) << "Wakeup after " << wakeup_in;
+    // wakeup_in = wakeup_at - Time::now_cached();
+    // LOG(DEBUG) << "Wakeup after " << wakeup_in;
     set_timeout_at(wakeup_at);
   }
   // TODO: write proper condition..

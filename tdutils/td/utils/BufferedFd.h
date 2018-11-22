@@ -171,7 +171,7 @@ Result<size_t> BufferedFd<FdT>::flush_read(size_t max_read) {
   if (result) {
     // TODO: faster sync is possible if you owns writer.
     input_reader_.sync_with_writer();
-    LOG(DEBUG) << "flush_read: +" << format::as_size(result) << tag("total", format::as_size(input_reader_.size()));
+    // LOG(DEBUG) << "flush_read: +" << format::as_size(result) << tag("total", format::as_size(input_reader_.size()));
   }
   return result;
 }
@@ -179,9 +179,9 @@ Result<size_t> BufferedFd<FdT>::flush_read(size_t max_read) {
 template <class FdT>
 Result<size_t> BufferedFd<FdT>::flush_write() {
   TRY_RESULT(result, Parent::flush_write());
-  if (result) {
-    LOG(DEBUG) << "flush_write: +" << format::as_size(result) << tag("left", format::as_size(output_reader_.size()));
-  }
+  // if (result) {
+  //   LOG(DEBUG) << "flush_write: +" << format::as_size(result) << tag("left", format::as_size(output_reader_.size()));
+  // }
   return result;
 }
 
