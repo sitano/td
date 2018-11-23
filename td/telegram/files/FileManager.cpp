@@ -738,7 +738,7 @@ Result<FileId> FileManager::register_file(FileData data, FileLocationSource file
 
   FileId file_id = next_file_id();
 
-  LOG(INFO) << "Register file data " << data.remote_name_ << " as " << file_id << " from " << source;
+  LOG(DEBUG2) << "Register file data " << data.remote_name_ << " as " << file_id << " from " << source;
   // create FileNode
   auto file_node_id = next_file_node_id();
   auto &node = file_nodes_[file_node_id];

@@ -3378,8 +3378,12 @@ testCallVectorStringObject x:vector<testString> = TestVectorStringObject;
 testSquareInt x:int32 = TestInt;
 //@description Sends a simple network request to the Telegram servers; for testing only
 testNetwork = Ok;
+//@description Forces an updates.getState call to the Telegram servers; for testing only
+testGetState = Ok;
 //@description Forces an updates.getDifference call to the Telegram servers; for testing only
 testGetDifference = Ok;
+//@description Forces an updates.getDifference call to the Telegram servers; for testing only
+testGetDifferenceWith pts:int32 date:int32 qts:int32 = Ok;
 //@description Does nothing and ensures that the Update object is used; for testing only
 testUseUpdate = Update;
 //@description Does nothing and ensures that the Error object is used; for testing only

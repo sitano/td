@@ -104,6 +104,7 @@ constexpr int VERBOSITY_NAME(ERROR) = 1;
 constexpr int VERBOSITY_NAME(WARNING) = 2;
 constexpr int VERBOSITY_NAME(INFO) = 3;
 constexpr int VERBOSITY_NAME(DEBUG) = 4;
+constexpr int VERBOSITY_NAME(DEBUG2) = 5;
 constexpr int VERBOSITY_NAME(NEVER) = 1024;
 
 namespace td {

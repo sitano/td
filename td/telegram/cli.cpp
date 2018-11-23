@@ -3315,8 +3315,21 @@ class CliClient final : public Actor {
 
       send_request(make_tl_object<td_api::reportSupergroupSpam>(to_integer<int32>(supergroup_id), as_user_id(user_id),
                                                                 as_message_ids(message_ids)));
+    } else if (op == "gstate") {
+        send_request(make_tl_object<td_api::testGetState>());
     } else if (op == "gdiff") {
-      send_request(make_tl_object<td_api::testGetDifference>());
+      string pts;
+      string date;
+      string qts;
+      std::tie(pts, args) = split(args);
+      std::tie(date, qts) = split(args);
+
+      if (pts.empty() && date.empty() && qts.empty()) {
+        send_request(make_tl_object<td_api::testGetDifference>());
+      } else {
+        send_request(make_tl_object<td_api::testGetDifferenceWith>(to_integer<int32>(pts), to_integer<int32>(date),
+                                                                   to_integer<int32>(qts)));
+      }
     } else if (op == "dproxy") {
       send_request(make_tl_object<td_api::disableProxy>());
     } else if (op == "eproxy") {

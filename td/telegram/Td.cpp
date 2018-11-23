@@ -3447,7 +3447,7 @@ void Td::force_get_difference() {
 }
 
 void Td::on_result(NetQueryPtr query) {
-  query->debug("Td: received from DcManager");
+  // query->debug("Td: received from DcManager");
   VLOG(net_query) << "on_result " << query;
   if (close_flag_ > 1) {
     return;
@@ -6802,8 +6802,18 @@ void Td::on_request(uint64 id, td_api::testNetwork &request) {
   create_handler<TestQuery>(id)->send();
 }
 
+void Td::on_request(uint64 id, td_api::testGetState &request) {
+  updates_manager_->get_difference_state("testGetState");
+  send_closure(actor_id(this), &Td::send_result, id, make_tl_object<td_api::ok>());
+}
+
 void Td::on_request(uint64 id, td_api::testGetDifference &request) {
   updates_manager_->get_difference("testGetDifference");
+  send_closure(actor_id(this), &Td::send_result, id, make_tl_object<td_api::ok>());
+}
+
+void Td::on_request(uint64 id, td_api::testGetDifferenceWith &request) {
+  updates_manager_->get_difference_with(request.pts_, request.date_, request.qts_, "testGetDifferenceWith");
   send_closure(actor_id(this), &Td::send_result, id, make_tl_object<td_api::ok>());
 }
 

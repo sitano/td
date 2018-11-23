@@ -116,20 +116,19 @@ class PingServerQuery : public Td::ResultHandler {
   }
 };
 
-class GetDifferenceQuery : public Td::ResultHandler {
+class GetDifferenceQueryWith : public Td::ResultHandler {
  public:
+  GetDifferenceQueryWith(int32 pts, int32 date, int32 qts): pts_(pts), date_(date), qts_(qts) {}
+
   void send() {
-    int32 pts = td->updates_manager_->get_pts();
-    int32 date = td->updates_manager_->get_date();
-    int32 qts = td->updates_manager_->get_qts();
-    if (pts < 0) {
-      pts = 0;
+    if (pts_ < 0) {
+      pts_ = 0;
     }
 
-    LOG(INFO) << tag("pts", pts) << tag("qts", qts) << tag("date", date);
+    LOG(INFO) << tag("pts", pts_) << tag("qts", qts_) << tag("date", date_);
 
     send_query(
-        G()->net_query_creator().create(create_storer(telegram_api::updates_getDifference(0, pts, 0, date, qts))));
+        G()->net_query_creator().create(create_storer(telegram_api::updates_getDifference(0, pts_, 0, date_, qts_))));
   }
 
   void on_result(uint64 id, BufferSlice packet) override {
@@ -152,7 +151,26 @@ class GetDifferenceQuery : public Td::ResultHandler {
     }
     status.ignore();
   }
+
+protected:
+  int32 pts_;
+  int32 date_;
+  int32 qts_;
 };
+
+class GetDifferenceQuery : public GetDifferenceQueryWith {
+ public:
+  GetDifferenceQuery(): GetDifferenceQueryWith(0, 0, 0) {}
+
+  void send() {
+    pts_ = td->updates_manager_->get_pts();
+    date_ = td->updates_manager_->get_date();
+    qts_ = td->updates_manager_->get_qts();
+
+    GetDifferenceQueryWith::send();
+  }
+};
+
 
 const double UpdatesManager::MAX_UNFILLED_GAP_TIME = 1.0;
 
@@ -226,6 +244,19 @@ void UpdatesManager::set_state(State::Type type) {
   state_.date = date_;
 }
 
+void UpdatesManager::get_difference_state(const char *source) {
+  if (running_get_difference_) {
+    LOG(INFO) << "Skip running getDifferenceState from " << source << " because it is already running";
+    return;
+  }
+
+  before_get_difference();
+
+  td_->create_handler<GetUpdatesStateQuery>()->send();
+
+  set_state(State::Type::RunningGetUpdatesState);
+}
+
 void UpdatesManager::get_difference(const char *source) {
   if (get_pts() == -1) {
     init_state();
@@ -247,6 +278,32 @@ void UpdatesManager::get_difference(const char *source) {
   before_get_difference();
 
   td_->create_handler<GetDifferenceQuery>()->send();
+  last_get_difference_pts_ = get_pts();
+
+  set_state(State::Type::RunningGetDifference);
+}
+
+void UpdatesManager::get_difference_with(int32 pts, int32 date, int32 qts, const char *source) {
+  if (get_pts() == -1) {
+    init_state();
+    return;
+  }
+
+  if (!td_->auth_manager_->is_authorized()) {
+    return;
+  }
+
+  if (running_get_difference_) {
+    LOG(INFO) << "Skip running getDifference from " << source << " because it is already running";
+    return;
+  }
+  running_get_difference_ = true;
+
+  LOG(INFO) << "-----BEGIN GET DIFFERENCE----- from " << source;
+
+  before_get_difference();
+
+  td_->create_handler<GetDifferenceQueryWith>(pts, date, qts)->send();
   last_get_difference_pts_ = get_pts();
 
   set_state(State::Type::RunningGetDifference);
