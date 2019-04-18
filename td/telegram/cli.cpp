@@ -3613,6 +3613,14 @@ void main(int argc, char **argv) {
     }
   }
 
+  if (api_id == 0 && api_hash == "") {
+    // set a default api values
+    // $ tg_cli --api_id 2899 --api_hash 36722c72256a24c1225de00eb6a1ca74
+    LOG(WARNING) << "You should provide some valid api_id and api_hash. Use defaults (2899).";
+    api_id = 2899;
+    api_hash = "36722c72256a24c1225de00eb6a1ca74";
+  }
+
   if (api_id == 0 || api_hash == "") {
     LOG(ERROR) << "You should provide some valid api_id and api_hash";
     return usage();

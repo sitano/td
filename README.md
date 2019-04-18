@@ -14,6 +14,16 @@ TDLib (Telegram Database library) is a cross-platform library for building [Tele
 - [Using with other programming languages](#using-json)
 - [License](#license)
 
+<a name="quickstart"></a>
+## Quick start
+
+    $ tg_cli --api_id 2899 --api_hash 36722c72256a24c1225de00eb6a1ca74
+    > sap +7xxxYYYzzzz              # set auth phone
+    > cac CODE FIRST_NAME LAST_NAME # auth code
+    > cap PASSWORD                  # or auth password
+    > gc                            # get chats list
+    > lo                            # logout
+
 <a name="features"></a>
 ## Features
 
